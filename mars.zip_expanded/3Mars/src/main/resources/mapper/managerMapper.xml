@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="go.to.mars.dao.ManagerMapper">
+
+	<select id="selectUserList" resultType="user">
+		SELECT * FROM userinfo
+	</select>
+
+	<select id="selectProductList" resultType="product">
+		SELECT * FROM
+		productInfo
+	</select>
+
+	<select id="selectBuyinfoList" resultType="buyinfo">
+		SELECT * FROM BuyInfo
+	</select>
+
+	<select id="selectSellList" resultType="sell">
+		SELECT * FROM SellInfo
+	</select>
+
+	<select id="selsctContactList" resultType="contact">
+		SELECT * FROM contact
+	</select>
+
+	<select id="selectProduct" resultType="product"
+		parameterType="int">
+		SELECT * FROM productInfo where product_num =
+		#{product_num }
+	</select>
+
+	<select id="selectBuyinfo" resultType="buyinfo"
+		parameterType="int">
+		SELECT * from Buyinfo where Buy_num = #{Buy_num }
+	</select>
+
+	<delete id="deleteUser" parameterType="string">
+		delete from userInfo where user_id = #{user_id }
+	</delete>
+
+	<delete id="deleteProduct" parameterType="int">
+		delete from productInfo where product_num = #{product_num }
+	</delete>
+
+	<delete id="deleteBuyinfo">
+		delete from BuyInfo where buy_num = #{buy_num }
+	</delete>
+
+	<delete id="deleteSell">
+		delete from SellInfo where sell_num = #{sell_num }
+	</delete>
+	
+	<delete id="deleteContact">
+		delete from contact where contact_num = #{contact_num }
+	</delete>
+
+	<insert id="addProduct" parameterType="product">
+		insert into productInfo(
+		product_num,
+		product_name,
+		product_price,
+		product_category,
+		product_add_date,
+		product_stock,
+		product_content,
+		product_image
+		) values
+		(
+		product_num_seq.nextval,
+		#{product_name},
+		#{product_price},
+		#{product_category},
+		sysdate,
+		#{product_stock},
+		#{product_content},
+		#{product_image}
+		)
+	</insert>
+
+	<insert id="addSellInfo" parameterType="buyinfo">
+		insert into SellInfo(
+		sell_num,
+		user_id,
+		product_num,
+		product_name,
+		product_price,
+		email,
+		phone,
+		sell_time
+		) values
+		(
+		sell_num_seq.nextval,
+		#{user_id },
+		#{product_num },
+		#{product_name },
+		#{product_price },
+		#{email },
+		#{phone },
+		sysdate
+		)
+	</insert>
+
+	<update id="updateProduct" parameterType="product">
+		update productInfo SET
+		(product_name,
+		product_price,
+		product_category,
+		product_content,
+		product_image)
+		= (
+		select
+		#{product_name },
+		#{product_price },
+		#{product_category },
+		#{product_content },
+		#{product_image }
+		from
+		productInfo
+		WHERE product_num = #{product_num }
+		)
+		WHERE product_num = #{product_num }
+	</update>
+	
+	<update id="updateProductStock_0" parameterType="int">
+		update productInfo set Product_Stock = 0 where product_num = #{product_num }
+	</update>
+	
+	<update id="updateProductStock_1" parameterType="int">
+		update productInfo set Product_Stock = 1 where product_num = #{product_num }
+	</update>
+	
+	<update id="updateBuyInfoStock" parameterType="int">
+		update BuyInfo set buyInfo_stock = '배송완료' where buy_num = #{buy_num }
+	</update>
+	
+</mapper>

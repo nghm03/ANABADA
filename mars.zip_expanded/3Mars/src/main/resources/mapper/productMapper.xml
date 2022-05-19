@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 회원정보 처리 SQL -->
+<mapper namespace="go.to.mars.dao.ProductMapper">
+	
+	<select id="selectProductList" resultType="product">
+		SELECT product_num, product_name, product_price, product_image, product_stock, product_category FROM productInfo
+	</select>
+	
+	<select id="selectBuy" parameterType="int" resultType="product">
+		SELECT * FROM productInfo WHERE product_num = #{product_num }
+	</select>
+
+    <!-- 장바구니 select -->
+    <select id="selectProduct" parameterType="int" resultType="cart">
+        select product_num, product_name, product_price, product_image, product_content
+        from productInfo
+        where product_num = #{product_num}
+    </select>
+    
+    <!-- 장바구니 insert -->
+    <insert id="plusCart" parameterType="cart">
+        insert into cart(
+            cart_num, user_id, product_num, product_name, product_price, product_image, product_content
+        ) values (
+            cart_num_seq.nextval, #{user_id}, #{product_num}, #{product_name}, #{product_price}, #{product_image}, #{product_content}
+        )
+    </insert>
+    
+    <!-- 카트리스트 가져오기 -->
+    <select id="cartlist" parameterType="String" resultType="cart">
+        select * from cart
+        where user_id = #{user_id}
+    </select>
+    
+    <!-- 카트 삭제 -->
+    <delete id="deleteCart" parameterType="hashmap">
+        delete from cart 
+        where user_id = #{user_id} and product_num = #{product_num}
+    </delete>
+    
+    <!-- 유저 캐시 가져오기 -->
+    <select id="getCash" parameterType="String" resultType="int">
+        select cash 
+        from userInfo
+        where user_id = #{user_id}
+    </select>
+    
+    <!-- 카트 총 가격 가져오기 -->
+    <select id="getTotal" parameterType="String" resultType="int">
+        select sum(product_price) as product_price
+        from cart 
+        where user_id = #{user_id}
+    </select>
+    
+    <!-- 카트정보 가져오기 -->
+    <select id="getCartInfo" parameterType="String" resultType="buyinfo">
+        select u.user_id, c.product_num, c.product_name, c.product_price, u.email, u.phone, u.post_code, u.address, u.detail_address
+        from userInfo u, cart c
+        where u.user_id = #{user_id}
+    </select>
+    
+    <!-- 구매정보 테이블에 담기 -->
+    <insert id="insertBuyInfo" parameterType="buyinfo">
+        insert into BuyInfo
+        (buy_num, user_id, product_num, product_name, product_price, email, phone, post_code, address, detail_address, buy_time, buyInfo_stock) 
+        values 
+        (buy_num_seq.nextval, #{user_id}, #{product_num}, #{product_name}, #{product_price}, #{email}, #{phone}, #{post_code}, #{address}, #{detail_address}, sysdate, '배송준비중')
+    </insert>
+    
+    <!-- 장바구니 삭제 -->
+    <delete id="deleteCartinfo" parameterType="String">
+        delete from cart
+        where user_id = #{user_id}
+    </delete>
+    
+    <!-- 유저 오더 정보 -->
+    <select id="userOrderInfo" parameterType="String" resultType="buyinfo">
+    select b.buy_time, p.product_image, p.product_name, p.product_price, b.buyInfo_stock
+    from productinfo p, buyinfo b
+    where p.product_num = b.product_num and user_id = #{user_id}
+    </select>
+    
+    <!-- 장바구니 중복 확인 -->
+    <select id="cartCheck" parameterType="cart" resultType="cart">
+    select * from cart WHERE user_id = #{user_id } and product_num = #{product_num }
+    </select>
+    
+    <!-- 검색창 구현 -->
+    <select id="search" parameterType="string" resultType="product">
+	select * from productInfo where product_name like '%'|| #{search } ||'%'
+    </select>
+
+</mapper>
+

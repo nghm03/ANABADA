@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 회원정보 처리 SQL -->
+<mapper namespace="go.to.mars.dao.UserMapper">
+	<insert id="signUp" parameterType="user">
+		insert into userInfo(
+			user_id,
+		    password,
+		    name,
+		    ssn,
+		    post_code,
+		    address,
+		    detail_address,
+		    phone,
+		    email,
+		    clause,
+		    cash
+		) values
+		(
+			 #{user_id},
+			 #{password},
+			 #{name},
+			 #{ssn},
+			 #{post_code},
+			 #{address},
+			 #{detail_address},
+			 #{phone},
+			 #{email},
+			 #{clause},
+			 #{cash}
+		)	
+	</insert>
+	
+	<select id="searchUser" parameterType="string" resultType="user">
+		SELECT * from userInfo WHERE user_id = #{id}
+	</select>
+	
+	<select id="searchId" parameterType="user" resultType="string">
+		SELECT user_id from userInfo WHERE name = #{name} and ssn = #{ssn}
+	</select>
+
+	<update id="updatePw" parameterType="user"> 
+		update userInfo set password = #{password} where user_id = #{user_id}
+	</update>
+
+	<select id="userInfo" parameterType="String" resultType="user">
+        select user_id, password, name, phone, email, post_code, address, detail_address, cash
+        from userInfo
+        where user_id = #{user_id}
+    </select>
+
+    <update id="userUpdate" parameterType="user">
+        update userInfo set 
+        password = #{password}, name = #{name}, post_code = #{post_code}, address = #{address}, detail_address = #{detail_address}, phone = #{phone}, email = #{email}
+        where user_id = #{user_id}
+    </update>
+    
+    <insert id="love" parameterType="contact">
+        insert into contact (
+        contact_num,
+        user_id,
+        email,
+        product_title,
+        product_info,
+        user_comment
+        ) values (
+        contact_num_seq.nextval,
+        #{user_id},
+        #{email},
+        #{product_title},
+        #{product_info},
+        #{user_comment}
+        )
+    </insert>
+    
+    <update id="cashUpdate" parameterType="hashmap">
+        update userinfo set cash = #{cash}
+        where user_id = #{user_id}
+    </update>
+    
+    <select id="userContact" resultType="contact">
+		SELECT * FROM contact where user_id = #{user_id} order by contact_num desc
+	</select>
+	
+</mapper>
+
